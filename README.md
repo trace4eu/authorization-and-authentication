@@ -51,5 +51,5 @@ Supported OAuth2 clients: see `./docker/run.sh`
 curl -X POST \
   -H "Content-Type: application/x-www-form-urlencoded" \
   --data token=.... \
-  "http://localhost:4444/oauth2/introspect"
+  "http://localhost:4445/oauth2/introspect"
 ```
