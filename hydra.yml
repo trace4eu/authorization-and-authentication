@@ -1,0 +1,17 @@
+serve:
+  cookies:
+    same_site_mode: Lax
+
+dsn: 'sqlite:///opt/db.sqlite?_fk=true'
+
+urls:
+  self:
+    issuer: https://auth.trace4eu.eu/
+
+secrets:
+  system:
+    - v4lp3MvsNseUZavZfCqeVhIqeBvXO4km
+
+strategies:
+  access_token: opaque
+  scope: exact
