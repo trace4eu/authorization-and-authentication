@@ -1,8 +1,14 @@
+<img src="https://trace4eu.eu/wp-content/uploads/2023/09/Logo_TRACE4EU_horizontal_positive_RGB.png" width="250" alt="TRACE4EU Logo">
+
 # authorization-and-authentication
 
-This is an initial demo version of the TRACE4EU authorization-and-authentication service, based on [Ory](https://www.ory.sh/).
+This is an initial demo version of the TRACE4EU authorization-and-authentication service, currently based on [Ory](https://www.ory.sh/).
 
-Warning: This is a demo component, NOT ready for production! Use at your own risk!
+This is part of TRACE4EU T2.2:
+
+* https://nextcloud.trace4eu.eu/apps/files/files/29886?dir=/TRACE4EU/WP2%20Technology%2C%20interoperability%20and%20cybersecurity/T22
+
+**Warning:** This is a demo component, NOT ready for production! Use at your own risk!
 
 # Build
 
