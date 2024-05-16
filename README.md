@@ -22,6 +22,14 @@ docker build -f ./docker/Dockerfile . -t trace4eu/authorization-and-authenticati
 docker run -it -p 4444:4444 trace4eu/authorization-and-authentication
 ```
 
+# Demo OAuth2 client credentials
+
+| client_id                             | client_secret    |
+|---------------------------------------|------------------|
+| 30ad6340-8706-47d1-baef-868208334609  | phae-Vei5phi1xu8 |
+| c85a016e-9c4a-4978-b110-d12902217992  | riezahd-o4IZue8u |
+| dbf2c28a-bfc0-4a89-b304-0319b48ff438  | ohM-ei1ieheimeiz |
+
 # Request an OAuth2 access token using the client credentials flow (public)
 
 ```bash
