@@ -19,7 +19,7 @@ docker build -f ./docker/Dockerfile . -t trace4eu/authorization-and-authenticati
 # Run
 
 ```bash
-docker run -it -p 4444:4444 trace4eu/authorization-and-authentication
+docker run -it -p 4444:4444 -p 4445:4445 trace4eu/authorization-and-authentication
 ```
 
 # Demo OAuth2 client credentials
