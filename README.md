@@ -8,7 +8,7 @@ This is part of TRACE4EU T2.2:
 
 * https://nextcloud.trace4eu.eu/apps/files/files/29886?dir=/TRACE4EU/WP2%20Technology%2C%20interoperability%20and%20cybersecurity/T22
 
-**Warning:** This is a demo component, NOT ready for production! Use at your own risk!
+**Warning:** This is a demo component, NOT ready for production! Secrets are currently hardcoded inside this repo. Use at your own risk!
 
 # Build
 
