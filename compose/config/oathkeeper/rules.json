@@ -1,0 +1,21 @@
+[
+  {
+    "id": "allow-anonymous-with-header-mutator",
+    "upstream": {
+      "url": "http://hydra:4445"
+    },
+    "match": {
+      "url": "http://localhost:4445/<.*>",
+      "methods": ["GET","POST"]
+    },
+    "authenticators": [
+      {
+        "handler": "anonymous"
+      }
+    ],
+    "authorizer": {
+      "handler": "allow"
+    },
+    "mutators": [{ "handler": "noop" }]
+  }
+]

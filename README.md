@@ -10,6 +10,17 @@ This is part of TRACE4EU T2.2:
 
 **Warning:** This is a demo component, NOT ready for production! Secrets are currently hardcoded inside this repo. Use at your own risk!
 
+This component uses:
+* [Ory hydra](https://www.ory.sh/hydra/)
+* [Ory oathkeeper](https://www.ory.sh/docs/oathkeeper)
+
+# Run
+From the compose directory execute:
+
+```bash
+docker-compose -f authorization-and-authentication.yml up --build
+```
+
 # Build
 
 ```bash

@@ -1,0 +1,39 @@
+serve:
+  proxy:
+    port: 4445 # run the proxy at port 4455
+  api:
+    port: 4456 # run the api at port 4456
+
+access_rules:
+  repositories:
+    - file:///etc/config/oathkeeper/rules.json
+
+errors:
+  fallback:
+    - json
+  handlers:
+    json:
+      enabled: true
+      config:
+        verbose: true
+    redirect:
+      enabled: true
+      config:
+        to: https://www.ory.sh/docs
+
+
+authorizers:
+  allow:
+    enabled: true
+  deny:
+    enabled: true
+
+authenticators:
+  anonymous:
+    enabled: true
+    config:
+      subject: guest
+
+mutators:
+  noop:
+    enabled: true
