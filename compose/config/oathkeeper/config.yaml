@@ -29,10 +29,16 @@ authorizers:
     enabled: true
 
 authenticators:
-  anonymous:
+  jwt:
+    # Set enabled to true if the authenticator should be enabled and false to disable the authenticator. Defaults to false.
     enabled: true
+
     config:
-      subject: guest
+      jwks_urls:
+        - file:///etc/config/oathkeeper/jwks.json
+      allowed_algorithms:
+        - ES256
+
 
 mutators:
   noop:
