@@ -33,8 +33,6 @@ From the compose directory execute:
 docker-compose -f authorization-and-authentication.yml up --build
 ```
 
-
-
 # JWTs for client authentication
 
 A client can be configured to use JWT for authentication. An example of suitable
@@ -78,7 +76,7 @@ with the following payload.
     "scope": "entity_creation signature_endpoint update_credential"
 }
 ```
-The `create_user.py` script located in folder `scripts` includes a python script
+The `config.py` script located in folder `scripts` includes a python script
 for creating such a client.
 
 A token can be requested by generating an appropriate `assertion`. The 
@@ -91,5 +89,5 @@ Then, a request to the token endpoint is made using the following parameters:
 "client_assertion_type":"urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
 "client_assertion":the assertion
 ```
-The `get_token.py` script located in folder `scripts` includes a python script
+The `client.py` script located in folder `scripts` includes a python script
 for requesting a token.
