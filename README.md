@@ -14,6 +14,18 @@ This component uses:
 * [Ory hydra](https://www.ory.sh/hydra/)
 * [Ory oathkeeper](https://www.ory.sh/docs/oathkeeper)
 
+# Component modules
+![Authorization and authentication component modules](images/auth-and-authz-topology.png)
+
+Oauth2.0 functionality of this component is handled by Ory hydra. Hydra's admin API
+is protected using oathkeeper and [JWT authenticator](https://www.ory.sh/docs/oathkeeper/pipeline/authn#jwt).
+Particularly, authorized API clients should include a JWT in the HTTP Authorization header of their requests
+JWTs should be signed using a key included in oathkeeper's configuration folder.
+
+The provided code includes an example of a JWT signing key, as well as an example of a script
+configured with an appropriate Bearer token. It also includes a script, named `generate_api_jwt.py`
+for generating a new key and a new Bearer token. 
+
 # Run
 From the compose directory execute:
 
@@ -21,49 +33,8 @@ From the compose directory execute:
 docker-compose -f authorization-and-authentication.yml up --build
 ```
 
-# Build
 
-```bash
-docker build -f ./docker/Dockerfile . -t trace4eu/authorization-and-authentication
-```
 
-# Run
-
-```bash
-docker run -it -p 4444:4444 -p 4445:4445 trace4eu/authorization-and-authentication
-```
-
-# Demo OAuth2 client credentials
-
-| client_id                             | client_secret    |
-|---------------------------------------|------------------|
-| 30ad6340-8706-47d1-baef-868208334609  | phae-Vei5phi1xu8 |
-| c85a016e-9c4a-4978-b110-d12902217992  | riezahd-o4IZue8u |
-| dbf2c28a-bfc0-4a89-b304-0319b48ff438  | ohM-ei1ieheimeiz |
-
-# Request an OAuth2 access token using the client credentials flow (public)
-
-```bash
-curl -X POST \
-  -H "Authorization: Basic MzBhZDYzNDAtODcwNi00N2QxLWJhZWYtODY4MjA4MzM0NjA5OnBoYWUtVmVpNXBoaTF4dTg=" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  --data grant_type=client_credentials \
-  --data scope=signature_endpoint \
-  "http://localhost:4444/oauth2/token"
-```
-
-Supported OAuth2 scopes: `entity_creation`, `signature_endpoint`, `update_credential`
-
-Supported OAuth2 clients: see `./docker/run.sh`
-
-# Introspect an OAuth2 access token (admin)
-
-```bash
-curl -X POST \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  --data token=.... \
-  "http://localhost:4445/oauth2/introspect"
-```
 # JWTs for client authentication
 
 A client can be configured to use JWT for authentication. An example of suitable

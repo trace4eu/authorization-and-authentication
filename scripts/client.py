@@ -4,6 +4,11 @@ import uuid
 import time
 from jwcrypto import jwk, jwt
 
+'''
+An OAuth 2.0 client application that receives a token from Hydra
+using client credentials grant type and a JWT assertion.
+'''
+
 #------Prepare JWK--------------
 
 json_key = json.dumps({

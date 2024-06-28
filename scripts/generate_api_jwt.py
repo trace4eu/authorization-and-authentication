@@ -13,6 +13,8 @@ Note that this object includes the private key as well
 '''
 
 json_key = json.dumps({
+    "kid":"#key1",
+    "use":"sig",
     "crv":"P-256",
     "d":"TvKuAqV1y1pTlWhJ_BG9WZZvnu1n0bonuleoZDtT89k",
     "kty":"EC","x":"3qmoY1Bs0eJ319TLku5ofe7q2guicdFSIu22miBLXHY",
@@ -32,3 +34,22 @@ with open('jwks.json', 'w') as jwks_json:
     jwks_json.write(json.dumps(jwks))
 
 print("Copy 'jwks.json' in '../compose/config/oathkeeper'")
+
+# Generate bearer token
+#------Token request-------------------
+jwt_header = {
+    "typ": "jwt",
+    "alg": "ES256",
+    "kid":"#key1"
+}
+
+jwt_claims={
+    "iss":"authorization-and-authentication-component",
+    "sub":"test-script",
+    "aud":"authorization-and-authentication-component"
+}
+
+signed_jwt = jwt.JWT(header=jwt_header, claims=jwt_claims)
+signed_jwt.make_signed_token(jwk_signin_key)
+
+print("Bearer token:",signed_jwt.serialize(compact=True))

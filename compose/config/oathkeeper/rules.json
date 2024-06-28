@@ -10,7 +10,7 @@
     },
     "authenticators": [
       {
-        "handler": "anonymous"
+        "handler": "jwt"
       }
     ],
     "authorizer": {
