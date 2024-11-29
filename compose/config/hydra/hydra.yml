@@ -1,0 +1,9 @@
+urls:
+  self:
+    issuer: http://localhost:4444
+
+secrets:
+  system:
+    - youReallyNeedToChangeThis
+
+

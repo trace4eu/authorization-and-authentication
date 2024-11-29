@@ -1,0 +1,40 @@
+[
+  {
+    "id": "allow-anonymous-with-header-mutator",
+    "upstream": {
+      "url": "http://hydra:4445"
+    },
+    "match": {
+      "url": "http://localhost:4445/<.*>",
+      "methods": ["GET","POST", "PATCH"]
+    },
+    "authenticators": [
+      {
+        "handler": "jwt"
+      }
+    ],
+    "authorizer": {
+      "handler": "allow"
+    },
+    "mutators": [{ "handler": "noop" }]
+  },
+  {
+    "id": "allow-anonymous-with-header-mutator",
+    "upstream": {
+      "url": "http://hydra:4445"
+    },
+    "match": {
+      "url": "https://api-dev-admin-auth.trace4eu.eu/<.*>",
+      "methods": ["GET","POST", "PATCH"]
+    },
+    "authenticators": [
+      {
+        "handler": "jwt"
+      }
+    ],
+    "authorizer": {
+      "handler": "allow"
+    },
+    "mutators": [{ "handler": "noop" }]
+  }
+]
