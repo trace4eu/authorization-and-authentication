@@ -1,0 +1,60 @@
+name: TRACE4EU Authorization and Authentication Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest requests jwcrypto python-dotenv
+      
+      - name: Create necessary directories
+        run: |
+          mkdir -p compose/config/oathkeeper
+          mkdir -p compose/config/hydra
+          mkdir -p test
+
+      - name: Generate JWT and JWKS files
+        run: |
+          python scripts/generate_api_jwt_test.py
+        
+      - name: Check generated files
+        run: |
+          ls -la compose/config/oathkeeper/
+          cat compose/config/oathkeeper/jwks.json
+          ls -la test/
+          cat test/.env
+      
+      - name: Start services with Docker Compose
+        run: |
+          docker compose -f compose/authorization-and-authentication-test.yml up -d
+          # Wait for services to be ready
+          echo "Waiting for services to be ready..."
+          sleep 3
+      
+      - name: Check running containers
+        run: docker ps
+      
+      - name: Run tests
+        run: pytest test/test.py
+
+      - name: Stop containers
+        if: always()
+        run: docker compose -f compose/authorization-and-authentication.yml down
