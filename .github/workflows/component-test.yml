@@ -2,9 +2,9 @@ name: TRACE4EU Authorization and Authentication Tests
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, test ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master, test ]
   workflow_dispatch:  # Allow manual triggering
 
 jobs:
