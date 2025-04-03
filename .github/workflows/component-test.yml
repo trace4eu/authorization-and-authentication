@@ -57,4 +57,4 @@ jobs:
 
       - name: Stop containers
         if: always()
-        run: docker compose -f compose/authorization-and-authentication.yml down
+        run: docker compose -f compose/authorization-and-authentication-test.yml down
