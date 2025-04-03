@@ -53,7 +53,7 @@ jobs:
         run: docker ps
       
       - name: Run tests
-        run: pytest test/test.py
+        run: pytest -vvs test/test.py
 
       - name: Stop containers
         if: always()
