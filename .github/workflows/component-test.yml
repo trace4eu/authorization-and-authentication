@@ -64,10 +64,6 @@ jobs:
           allure_results: allure-results
           # Specify the desired output directory name
           gh_pages: allure-report 
-
-      # - name: Generate Allure Report
-      #   if: always() # Run even if tests fail
-      #   run: allure generate ./allure-results --clean -o ./allure-report
   
       - name: Upload Allure Report as Artifact
         if: always() # Upload report even if tests failed
