@@ -2,6 +2,7 @@
 Test suite for TRACE4EU authorization and authentication component.
 """
 
+import allure
 import requests
 import json
 import base64
@@ -353,8 +354,13 @@ class AuthTestBase:
 
 
 # --- Positive Test Scenarios ---
+@allure.epic("TRACE4EU Authorization and Authentication component")
+@allure.feature("Positive Scenarios")
 class TestAuthServicePositive(AuthTestBase):
 
+    @allure.title("Scenario 1: Client application authorization with JWT authentication")
+    @allure.description("Verifies that a client can register with JWT authentication, configure a scope, and obtain a valid access token using private_key_jwt authentication")
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_scenario1_client_auth_with_jwt(self):
         print("\n\n=== Running Scenario 1: Client with JWT Auth (private_key_jwt) ===")
         test_client_id = self._generate_unique_id("pos-s1-jwt")
@@ -386,6 +392,8 @@ class TestAuthServicePositive(AuthTestBase):
         assert introspect_data.get("client_id") == test_client_id, "Client ID mismatch in Sc1"
         print(f"Step 4: Token introspection successful and active")
 
+    @allure.title("Scenario 2: Delegation of authorization rights to a user")
+    @allure.description("Verifies that a user can delegate authorization rights to a client, which can request an access token by presenting a user-signed JWT authorization grant")
     def test_scenario2_user_delegated_auth(self):
         print("\n\n=== Running Scenario 2: User Delegated Auth (jwt-bearer grant) ===")
         test_client_id = self._generate_unique_id("pos-s2-dlg")
@@ -428,6 +436,8 @@ class TestAuthServicePositive(AuthTestBase):
         assert introspect_data.get("client_id") == test_client_id, "Client ID mismatch in Sc2 token"
         print(f"Step 5: Token introspection successful. User Sub: {introspect_data.get('sub')}, Client ID: {introspect_data.get('client_id')}")
 
+    @allure.title("Scenario 3: Issue JWT access tokens")
+    @allure.description("Verifies that the system can issue access tokens in JWT format when configured with the JWT access token strategy, maintaining the correct format and required structure")
     def test_scenario3_jwt_access_token(self):
         print("\n\n=== Running Scenario 3: JWT Access Token Strategy ===")
         test_client_id = self._generate_unique_id("pos-s3-jwt")
@@ -468,10 +478,12 @@ class TestAuthServicePositive(AuthTestBase):
 
 # --- Negative Test Scenarios ---
 # (Using instance methods like self._register_client_instance for actions within tests)
-
+@allure.feature("Negative Tests Scenario 1")
 class TestAuthServiceNegativeScenario1(AuthTestBase):
     """Negative tests focusing on Scenario 1: Client Auth with JWT (private_key_jwt)"""
 
+    @allure.title("Negative test - Invalid client registration parameters")
+    @allure.description("Verifies that client registration fails with invalid parameters such as improper redirect URIs")
     def test_neg_s1_invalid_client_registration_params(self):
         print("\n\n=== Running Neg Sc1: Invalid Client Registration Params ===")
         client_id = self._generate_unique_id("neg-s1-regbad")
@@ -488,6 +500,8 @@ class TestAuthServiceNegativeScenario1(AuthTestBase):
         assert response.status_code not in [200, 201], f"Neg Sc1 Reg Params: Expected failure, got {response.status_code}. Body: {response.text}"
         print(f"Neg Sc1 Reg Params: Registration failed as expected ({response.status_code})")
 
+    @allure.title("Negative test - Unsupported signing algorithm")
+    @allure.description("Ensures the system rejects client registrations with unsupported JWT signing algorithms")
     def test_neg_s1_unsupported_algorithm(self):
         print("\n\n=== Running Neg Sc1: Unsupported Client Auth Algorithm ===")
         client_id = self._generate_unique_id("neg-s1-algo")
@@ -502,6 +516,8 @@ class TestAuthServiceNegativeScenario1(AuthTestBase):
         assert response.status_code not in [200, 201], f"Neg Sc1 Algo: Expected failure, got {response.status_code}. Body: {response.text}"
         print(f"Neg Sc1 Algo: Registration or subsequent token request should fail ({response.status_code})")
 
+    @allure.title("Negative test - Expired JWT assertion")
+    @allure.description("Confirms that token requests with expired JWT client assertions are propery rejected")
     def test_neg_s1_expired_jwt_assertion(self):
         print("\n\n=== Running Neg Sc1: Expired Client JWT Assertion ===")
         client_id = self._generate_unique_id("neg-s1-expjwt")
@@ -518,7 +534,9 @@ class TestAuthServiceNegativeScenario1(AuthTestBase):
         token_res = self._get_token_client_credentials(client_id, expired_assertion, DEFAULT_TEST_SCOPE)
         assert token_res.status_code not in [200], f"Neg Sc1 ExpJWT: Expected failure, got {token_res.status_code}. Body: {token_res.text}"
         print(f"Neg Sc1 ExpJWT: Token request failed due to expired assertion as expected ({token_res.status_code})")
-
+    
+    @allure.title("Negative test - Invalid audience in JWT assertion")
+    @allure.description("Verifies that JWT assertions with incorrect audience claims are rejected during token requests")
     def test_neg_s1_invalid_audience(self):
         print("\n\n=== Running Neg Sc1: Invalid Audience in Client Assertion ===")
         client_id = self._generate_unique_id("neg-s1-aud")
@@ -536,6 +554,8 @@ class TestAuthServiceNegativeScenario1(AuthTestBase):
         assert token_res.status_code not in [200], f"Neg Sc1 Aud: Expected failure, got {token_res.status_code}. Body: {token_res.text}"
         print(f"Neg Sc1 Aud: Token request failed due to invalid audience as expected ({token_res.status_code})")
 
+    @allure.title("Negative test - Wrong signing key")
+    @allure.description("Ensures token requests fail when using a different signing key than the one registered")
     def test_neg_s1_wrong_signing_key(self):
         print("\n\n=== Running Neg Sc1: Client Assertion Signed with Wrong Key ===")
         client_id = self._generate_unique_id("neg-s1-key")
@@ -553,6 +573,8 @@ class TestAuthServiceNegativeScenario1(AuthTestBase):
         assert token_res.status_code not in [200], f"Neg Sc1 Key: Expected failure, got {token_res.status_code}. Body: {token_res.text}"
         print(f"Neg Sc1 Key: Token request failed due to signature mismatch as expected ({token_res.status_code})")
 
+    @allure.title("Negative test - Invalid scope request")
+    @allure.description("Confirms that requests for unauthorized scopes either fail or return tokens with reduced permissions")
     def test_neg_s1_invalid_scope_request(self):
         print("\n\n=== Running Neg Sc1: Client Requesting Invalid Scope ===")
         client_id = self._generate_unique_id("neg-s1-scope")
@@ -578,7 +600,9 @@ class TestAuthServiceNegativeScenario1(AuthTestBase):
              # If it failed (e.g., 400 Bad Request), that's also acceptable.
              assert token_res.status_code not in [200], f"Neg Sc1 Scope: Expected failure or reduced scope, got {token_res.status_code}. Body: {token_res.text}"
              print(f"Neg Sc1 Scope: Token request failed due to invalid scope request as expected ({token_res.status_code})")
-
+    
+    @allure.title("Negative test - Client ID issuer mismatch")
+    @allure.description("Verifies that JWT assertions with issuers not matching the client ID are rejected")
     def test_neg_s1_client_id_issuer_mismatch(self):
         print("\n\n=== Running Neg Sc1: Client ID / Issuer Mismatch in Assertion ===")
         client_id = self._generate_unique_id("neg-s1-iss")
@@ -597,6 +621,8 @@ class TestAuthServiceNegativeScenario1(AuthTestBase):
         assert token_res.status_code not in [200], f"Neg Sc1 ID/Iss: Expected failure, got {token_res.status_code}. Body: {token_res.text}"
         print(f"Neg Sc1 ID/Iss: Token request failed due to issuer/client_id mismatch as expected ({token_res.status_code})")
 
+    @allure.title("Negative test - Tampered JWT assertion")
+    @allure.description("Ensures that modified or tampered JWT assertions fail signature validation and are rejected")
     def test_neg_s1_tampered_jwt_assertion(self):
         print("\n\n=== Running Neg Sc1: Tampered Client JWT Assertion ===")
         client_id = self._generate_unique_id("neg-s1-tamper")
@@ -617,7 +643,7 @@ class TestAuthServiceNegativeScenario1(AuthTestBase):
         assert token_res.status_code not in [200], f"Neg Sc1 Tamper: Expected failure due to invalid signature, got {token_res.status_code}. Body: {token_res.text}"
         print(f"Neg Sc1 Tamper: Token request failed due to tampered assertion (invalid signature) as expected ({token_res.status_code})")
 
-
+@allure.feature("Negative Tests Scenario 2")
 class TestAuthServiceNegativeScenario2(AuthTestBase):
     """Negative tests focusing on Scenario 2: User Delegated Auth (jwt-bearer grant)"""
 
@@ -662,6 +688,8 @@ class TestAuthServiceNegativeScenario2(AuthTestBase):
 
 
     # Test methods use instance methods (self._method_name) as usual
+    @allure.title("Negative test - Expired JWT grant assertion")
+    @allure.description("Verifies that authorization servers reject JWT authorization grants that have expired")
     def test_neg_s2_expired_jwt_grant_assertion(self):
         print("\n\n=== Running Neg Sc2: Expired JWT Grant Assertion ===")
         # Create an expired grant assertion (signed with user's key)
@@ -675,6 +703,8 @@ class TestAuthServiceNegativeScenario2(AuthTestBase):
         assert token_res.status_code != 200, f"Neg Sc2 ExpGrant: Expected failure, got {token_res.status_code}. Body: {token_res.text}"
         print(f"Neg Sc2 ExpGrant: Token request failed due to expired grant assertion as expected ({token_res.status_code})")
 
+    @allure.title("Negative test - Invalid client secret")
+    @allure.description("Confirms that token requests fail when clients provide incorrect client secrets")
     def test_neg_s2_invalid_client_secret(self):
         print("\n\n=== Running Neg Sc2: Invalid Client Secret ===")
         # Create a valid grant assertion
@@ -687,6 +717,8 @@ class TestAuthServiceNegativeScenario2(AuthTestBase):
         # This failure is due to client authentication (Basic Auth), not the grant itself
         print(f"Neg Sc2 BadSecret: Token request failed due to invalid client secret as expected ({token_res.status_code})")
 
+    @allure.title("Negative test - Mismatched subject in grant")
+    @allure.description("Ensures the system rejects JWT grants where the subject doesn't match the registered subject")
     def test_neg_s2_mismatched_subject_in_grant(self):
         print("\n\n=== Running Neg Sc2: Mismatched Subject in Grant Assertion ===")
         # Create grant assertion with the correct issuer BUT the wrong subject
@@ -700,6 +732,8 @@ class TestAuthServiceNegativeScenario2(AuthTestBase):
         assert token_res.status_code != 200, f"Neg Sc2 BadSubj: Expected failure, got {token_res.status_code}. Body: {token_res.text}"
         print(f"Neg Sc2 BadSubj: Token request failed due to subject mismatch in grant as expected ({token_res.status_code})")
 
+    @allure.title("Negative test - Invalid grant signature")
+    @allure.description("Verifies that JWT grants with invalid signatures are properly rejected")
     def test_neg_s2_invalid_grant_signature(self):
         print("\n\n=== Running Neg Sc2: Invalid Signature on Grant Assertion ===")
         # Create grant assertion signed with the WRONG private key
@@ -712,7 +746,9 @@ class TestAuthServiceNegativeScenario2(AuthTestBase):
         )
         assert token_res.status_code != 200, f"Neg Sc2 BadSig: Expected failure, got {token_res.status_code}. Body: {token_res.text}"
         print(f"Neg Sc2 BadSig: Token request failed due to invalid grant signature as expected ({token_res.status_code})")
-
+    
+    @allure.title("Negative test - Tampered grant assertion")
+    @allure.description("Verifies token request fails when the jwt-bearer grant assertion's payload is modified, invalidating its signature")   
     def test_neg_s2_tampered_grant_assertion(self):
         print("\n\n=== Running Neg Sc2: Tampered Grant Assertion ===")
         # Create a valid grant
@@ -727,7 +763,8 @@ class TestAuthServiceNegativeScenario2(AuthTestBase):
         assert token_res.status_code != 200, f"Neg Sc2 TamperGrant: Expected failure, got {token_res.status_code}. Body: {token_res.text}"
         print(f"Neg Sc2 TamperGrant: Token request failed due to tampered grant (invalid signature) as expected ({token_res.status_code})")
 
-
+    @allure.title("Negative test - Invalid audience in grant")
+    @allure.description("Confirms that JWT grants with incorrect audience claims are rejected")
     def test_neg_s2_invalid_audience_in_grant(self):
         print("\n\n=== Running Neg Sc2: Invalid Audience in Grant Assertion ===")
         # Create grant assertion with the wrong audience
@@ -741,6 +778,8 @@ class TestAuthServiceNegativeScenario2(AuthTestBase):
         assert token_res.status_code != 200, f"Neg Sc2 BadAud: Expected failure, got {token_res.status_code}. Body: {token_res.text}"
         print(f"Neg Sc2 BadAud: Token request failed due to invalid audience in grant as expected ({token_res.status_code})")
 
+    @allure.title("Negative test - Request excessive scope")
+    @allure.description("Verifies that requests for scopes beyond what's authorized either fail or return reduced scope tokens")
     def test_neg_s2_request_excessive_scope(self):
         print("\n\n=== Running Neg Sc2: Client Requesting Excessive Scope ===")
         # Create a valid grant assertion
@@ -759,6 +798,8 @@ class TestAuthServiceNegativeScenario2(AuthTestBase):
             assert token_res.status_code != 200, f"Neg Sc2 ExScope: Expected failure or reduced scope, got {token_res.status_code}. Body: {token_res.text}"
             print(f"Neg Sc2 ExScope: Token request failed due to excessive scope request as expected ({token_res.status_code})")
 
+    @allure.title("Negative test - Unregistered issuer in grant")
+    @allure.description("Ensures the system rejects JWT grants from issuers that aren't registered in the system")
     def test_neg_s2_unregistered_issuer_in_grant(self):
         print("\n\n=== Running Neg Sc2: Unregistered Issuer in Grant Assertion ===")
         # Use an issuer for which no grant has been registered
@@ -773,10 +814,12 @@ class TestAuthServiceNegativeScenario2(AuthTestBase):
 
 
 # --- Negative Tests for Scenario 3 (JWT Access Token Strategy) ---
-
+@allure.feature("Negative Tests Scenario 3")
 class TestAuthServiceNegativeScenario3(AuthTestBase):
     """Negative tests focusing on Scenario 3: JWT Access Token Strategy"""
 
+    @allure.title("Negative test - Expired JWT grant")
+    @allure.description("Verifies that requests for JWT access tokens with expired authorization grants are rejected")
     def test_neg_s3_expired_jwt_grant(self):
         print("\n\n=== Running Neg Sc3: Expired JWT Grant (JWT Token Strategy) ===")
         # Setup for this specific test
@@ -795,7 +838,9 @@ class TestAuthServiceNegativeScenario3(AuthTestBase):
         token_res = self._get_token_jwt_bearer_grant(client_id, DEFAULT_CLIENT_SECRET, expired_grant, DEFAULT_TEST_SCOPE)
         assert token_res.status_code != 200, f"Neg Sc3 ExpGrant: Expected failure, got {token_res.status_code}. Body: {token_res.text}"
         print(f"Neg Sc3 ExpGrant: Token request failed due to expired grant as expected ({token_res.status_code})")
-
+    
+    @allure.title("Negative test - Grant with wrong signature")
+    @allure.description("Confirms that authorization grants signed with incorrect keys are rejected for JWT token issuance")
     def test_neg_s3_grant_wrong_signature(self):
         print("\n\n=== Running Neg Sc3: Grant with Wrong Signature (JWT Token Strategy) ===")
         # Setup
@@ -815,8 +860,8 @@ class TestAuthServiceNegativeScenario3(AuthTestBase):
         assert token_res.status_code != 200, f"Neg Sc3 Sig: Expected failure, got {token_res.status_code}. Body: {token_res.text}"
         print(f"Neg Sc3 Sig: Token request failed due to wrong grant signature as expected ({token_res.status_code})")
 
-    # --- NEW TEST CASES ADDED BELOW ---
-
+    @allure.title("Negative test - Grant with invalid audience")
+    @allure.description("Ensures JWT grants with incorrect audience values are rejected when requesting JWT access tokens")
     def test_neg_s3_grant_invalid_audience(self):
         print("\n\n=== Running Neg Sc3: Grant with Invalid Audience (JWT Token Strategy) ===")
         # Setup
@@ -836,6 +881,8 @@ class TestAuthServiceNegativeScenario3(AuthTestBase):
         assert token_res.status_code != 200, f"Neg Sc3 Aud: Expected failure, got {token_res.status_code}. Body: {token_res.text}"
         print(f"Neg Sc3 Aud: Token request failed due to invalid grant audience as expected ({token_res.status_code})")
 
+    @allure.title("Negative test - Grant issuer mismatch")
+    @allure.description("Verifies that grants from issuers not matching registered values are rejected")
     def test_neg_s3_grant_issuer_mismatch(self):
         print("\n\n=== Running Neg Sc3: Grant Issuer Mismatch (JWT Token Strategy) ===")
         # Setup
@@ -859,6 +906,8 @@ class TestAuthServiceNegativeScenario3(AuthTestBase):
         assert token_res.status_code != 200, f"Neg Sc3 Iss: Expected failure, got {token_res.status_code}. Body: {token_res.text}"
         print(f"Neg Sc3 Iss: Token request failed due to grant issuer mismatch/unregistered issuer as expected ({token_res.status_code})")
 
+    @allure.title("Negative test - Request with invalid scope")
+    @allure.description("Confirms that requests for unauthorized scopes either fail or result in tokens with reduced permissions")
     def test_neg_s3_request_invalid_scope(self):
         print("\n\n=== Running Neg Sc3: Request Invalid Scope (JWT Token Strategy) ===")
         # Setup
@@ -890,6 +939,8 @@ class TestAuthServiceNegativeScenario3(AuthTestBase):
             assert token_res.status_code != 200, f"Neg Sc3 Scope: Expected failure or reduced scope, got {token_res.status_code}. Body: {token_res.text}"
             print(f"Neg Sc3 Scope: Token request failed due to invalid scope request as expected ({token_res.status_code})")
 
+    @allure.title("Negative test - Tampered grant")
+    @allure.description("Verifies token request fails when the grant assertion's payload is modified, invalidating its signature")
     def test_neg_s3_tampered_grant(self):
         print("\n\n=== Running Neg Sc3: Tampered Grant Assertion (JWT Token Strategy) ===")
         # Setup
