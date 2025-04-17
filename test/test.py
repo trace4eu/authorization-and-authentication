@@ -478,6 +478,7 @@ class TestAuthServicePositive(AuthTestBase):
 
 # --- Negative Test Scenarios ---
 # (Using instance methods like self._register_client_instance for actions within tests)
+@allure.epic("TRACE4EU Authorization and Authentication component")
 @allure.feature("Negative Tests Scenario 1")
 class TestAuthServiceNegativeScenario1(AuthTestBase):
     """Negative tests focusing on Scenario 1: Client Auth with JWT (private_key_jwt)"""
@@ -643,6 +644,7 @@ class TestAuthServiceNegativeScenario1(AuthTestBase):
         assert token_res.status_code not in [200], f"Neg Sc1 Tamper: Expected failure due to invalid signature, got {token_res.status_code}. Body: {token_res.text}"
         print(f"Neg Sc1 Tamper: Token request failed due to tampered assertion (invalid signature) as expected ({token_res.status_code})")
 
+@allure.epic("TRACE4EU Authorization and Authentication component")
 @allure.feature("Negative Tests Scenario 2")
 class TestAuthServiceNegativeScenario2(AuthTestBase):
     """Negative tests focusing on Scenario 2: User Delegated Auth (jwt-bearer grant)"""
@@ -814,6 +816,7 @@ class TestAuthServiceNegativeScenario2(AuthTestBase):
 
 
 # --- Negative Tests for Scenario 3 (JWT Access Token Strategy) ---
+@allure.epic("TRACE4EU Authorization and Authentication component")
 @allure.feature("Negative Tests Scenario 3")
 class TestAuthServiceNegativeScenario3(AuthTestBase):
     """Negative tests focusing on Scenario 3: JWT Access Token Strategy"""
